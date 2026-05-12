@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>3D Book Portfolio</title>
+
+  <!-- Icons -->
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+
+  <style>
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family:Arial, Helvetica, sans-serif;
+    }
+
+    body{
+      min-height:100vh;
+      background:linear-gradient(135deg,#0f172a,#1e1b4b,#111827);
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      overflow:hidden;
+      color:white;
+    }
+
+    .container{
+      perspective:2500px;
+    }
+
+    .book{
+      position:relative;
+      width:900px;
+      height:550px;
+      transform-style:preserve-3d;
+      transition:1s;
+    }
+
+    .page{
+      position:absolute;
+      width:100%;
+      height:100%;
+      background:white;
+      border-radius:15px;
+      overflow:hidden;
+      transform-origin:left;
+      transition:1s;
+      box-shadow:0 0 30px rgba(0,0,0,.5);
+      color:#111;
+    }
+
+    .page-front,
+    .page-back{
+      position:absolute;
+      width:100%;
+      height:100%;
+      backface-visibility:hidden;
+      padding:40px;
+    }
+
+    .page-back{
+      transform:rotateY(180deg);
+    }
+
+    .page.turn{
+      transform:rotateY(-180deg);
+    }
+
+    .cover{
+      background:linear-gradient(135deg,#2563eb,#06b6d4);
+      color:white;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      flex-direction:column;
+      text-align:center;
+    }
+
+    .cover h1{
+      font-size:50px;
+      margin-bottom:15px;
+    }
+
+    .cover p{
+      font-size:20px;
+      opacity:.9;
+    }
+
+    .profile{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:30px;
+      height:100%;
+    }
+
+    .left-side{
+      border-right:2px solid #ddd;
+      padding-right:20px;
+    }
+
+    .profile-img{
+      width:140px;
+      height:140px;
+      border-radius:50%;
+      background:linear-gradient(135deg,#2563eb,#06b6d4);
+      margin-bottom:20px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:60px;
+      color:white;
+    }
+
+    .left-side h2{
+      margin-bottom:10px;
+      font-size:35px;
+    }
+
+    .left-side h3{
+      color:#2563eb;
+      margin-bottom:20px;
+    }
+
+    .social{
+      display:flex;
+      gap:15px;
+      margin:20px 0;
+    }
+
+    .social a{
+      width:45px;
+      height:45px;
+      background:#2563eb;
+      color:white;
+      border-radius:50%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      text-decoration:none;
+      font-size:22px;
+      transition:.3s;
+    }
+
+    .social a:hover{
+      transform:translateY(-5px);
+      background:#111827;
+    }
+
+    .btns{
+      margin-top:25px;
+      display:flex;
+      gap:15px;
+      flex-wrap:wrap;
+    }
+
+    .btn{
+      padding:12px 25px;
+      border:none;
+      background:#2563eb;
+      color:white;
+      border-radius:8px;
+      cursor:pointer;
+      transition:.3s;
+      text-decoration:none;
+      font-weight:bold;
+    }
+
+    .btn:hover{
+      background:#111827;
+    }
+
+    .skills h2{
+      margin-bottom:20px;
+    }
+
+    .skill-grid{
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:15px;
+    }
+
+    .skill-card{
+      background:#f3f4f6;
+      padding:20px;
+      border-radius:10px;
+      text-align:center;
+      transition:.3s;
+    }
+
+    .skill-card:hover{
+      transform:scale(1.05);
+      background:#dbeafe;
+    }
+
+    .skill-card i{
+      font-size:40px;
+      color:#2563eb;
+      margin-bottom:10px;
+    }
+
+    .projects{
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:20px;
+      margin-top:20px;
+    }
+
+    .project-card{
+      background:#f3f4f6;
+      border-radius:10px;
+      overflow:hidden;
+      transition:.4s;
+    }
+
+    .project-card:hover{
+      transform:translateY(-10px);
+    }
+
+    .project-card img{
+      width:100%;
+      height:180px;
+      object-fit:cover;
+    }
+
+    .project-content{
+      padding:15px;
+    }
+
+    .project-content h3{
+      margin-bottom:10px;
+    }
+
+    .project-content p{
+      font-size:14px;
+      margin-bottom:15px;
+    }
+
+    .contact{
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      height:100%;
+    }
+
+    .contact h2{
+      margin-bottom:20px;
+      font-size:40px;
+    }
+
+    .input-box{
+      margin-bottom:20px;
+    }
+
+    .input-box input,
+    .input-box textarea{
+      width:100%;
+      padding:15px;
+      border-radius:10px;
+      border:1px solid #ccc;
+      outline:none;
+      resize:none;
+    }
+
+    .navigation{
+      position:absolute;
+      bottom:-80px;
+      left:50%;
+      transform:translateX(-50%);
+      display:flex;
+      gap:20px;
+    }
+
+    .nav-btn{
+      width:60px;
+      height:60px;
+      border-radius:50%;
+      border:none;
+      background:#2563eb;
+      color:white;
+      font-size:25px;
+      cursor:pointer;
+      transition:.3s;
+    }
+
+    .nav-btn:hover{
+      background:#06b6d4;
+      transform:scale(1.1);
+    }
+
+    @media(max-width:950px){
+
+      body{
+        padding:30px;
+      }
+
+      .book{
+        width:100%;
+        height:auto;
+      }
+
+      .page{
+        position:relative;
+        margin-bottom:30px;
+        height:auto;
+      }
+
+      .profile{
+        grid-template-columns:1fr;
+      }
+
+      .left-side{
+        border-right:none;
+        border-bottom:2px solid #ddd;
+        padding-bottom:20px;
+      }
+
+      .projects{
+        grid-template-columns:1fr;
+      }
+
+      .navigation{
+        position:relative;
+        margin-top:20px;
+        bottom:0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <div class="book" id="book">
+
+    <!-- CAPA -->
+    <div class="page" id="page1">
+      <div class="page-front cover">
+        <h1>Meu Portfólio</h1>
+        <p>Desenvolvedor Front-End</p>
+      </div>
+    </div>
+
+    <!-- SOBRE -->
+    <div class="page" id="page2">
+      <div class="page-front">
+
+        <div class="profile">
+
+          <div class="left-side">
+
+            <div class="profile-img">
+              <i class='bx bx-code-alt'></i>
+            </div>
+
+            <h2>Seu Nome</h2>
+            <h3>Web Developer</h3>
+
+            <p>
+              Sou desenvolvedor web especializado em HTML, CSS,
+              JavaScript e interfaces modernas responsivas.
+            </p>
+
+            <div class="social">
+              <a href="#"><i class='bx bxl-facebook'></i></a>
+              <a href="#"><i class='bx bxl-instagram'></i></a>
+              <a href="#"><i class='bx bxl-github'></i></a>
+              <a href="#"><i class='bx bxl-linkedin'></i></a>
+            </div>
+
+            <div class="btns">
+              <a href="#" class="btn">Download CV</a>
+              <a href="#" class="btn">Contato</a>
+            </div>
+
+          </div>
+
+          <div class="skills">
+
+            <h2>Minhas Skills</h2>
+
+            <div class="skill-grid">
+
+              <div class="skill-card">
+                <i class='bx bxl-html5'></i>
+                <h3>HTML5</h3>
+              </div>
+
+              <div class="skill-card">
+                <i class='bx bxl-css3'></i>
+                <h3>CSS3</h3>
+              </div>
+
+              <div class="skill-card">
+                <i class='bx bxl-javascript'></i>
+                <h3>JavaScript</h3>
+              </div>
+
+              <div class="skill-card">
+                <i class='bx bxl-react'></i>
+                <h3>React</h3>
+              </div>
+
+              <div class="skill-card">
+                <i class='bx bxl-nodejs'></i>
+                <h3>Node.js</h3>
+              </div>
+
+              <div class="skill-card">
+                <i class='bx bxl-bootstrap'></i>
+                <h3>Bootstrap</h3>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+    <!-- PROJETOS -->
+    <div class="page" id="page3">
+
+      <div class="page-front">
+
+        <h1>Projetos</h1>
+
+        <div class="projects">
+
+          <div class="project-card">
+            <img src="https://picsum.photos/400/250?1">
+
+            <div class="project-content">
+              <h3>Projeto Dashboard</h3>
+
+              <p>
+                Sistema administrativo moderno utilizando HTML,
+                CSS e JavaScript.
+              </p>
+
+              <a href="#" class="btn">Ver Projeto</a>
+            </div>
+          </div>
+
+          <div class="project-card">
+            <img src="https://picsum.photos/400/250?2">
+
+            <div class="project-content">
+              <h3>E-commerce</h3>
+
+              <p>
+                Loja virtual responsiva com carrinho e animações.
+              </p>
+
+              <a href="#" class="btn">Ver Projeto</a>
+            </div>
+          </div>
+
+          <div class="project-card">
+            <img src="https://picsum.photos/400/250?3">
+
+            <div class="project-content">
+              <h3>Landing Page</h3>
+
+              <p>
+                Página moderna com design profissional e responsivo.
+              </p>
+
+              <a href="#" class="btn">Ver Projeto</a>
+            </div>
+          </div>
+
+          <div class="project-card">
+            <img src="https://picsum.photos/400/250?4">
+
+            <div class="project-content">
+              <h3>Portfolio 3D</h3>
+
+              <p>
+                Interface 3D animada inspirada em livros digitais.
+              </p>
+
+              <a href="#" class="btn">Ver Projeto</a>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- CONTATO -->
+    <div class="page" id="page4">
+
+      <div class="page-front contact">
+
+        <h2>Contato</h2>
+
+        <div class="input-box">
+          <input type="text" placeholder="Seu Nome">
+        </div>
+
+        <div class="input-box">
+          <input type="email" placeholder="Seu Email">
+        </div>
+
+        <div class="input-box">
+          <textarea rows="6" placeholder="Sua Mensagem"></textarea>
+        </div>
+
+        <button class="btn">Enviar Mensagem</button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- BOTÕES -->
+  <div class="navigation">
+    <button class="nav-btn" id="prev">
+      <i class='bx bx-chevron-left'></i>
+    </button>
+
+    <button class="nav-btn" id="next">
+      <i class='bx bx-chevron-right'></i>
+    </button>
+  </div>
+
+</div>
+
+<script>
+
+  const pages = document.querySelectorAll(".page");
+
+  let currentPage = 0;
+
+  document.getElementById("next").onclick = () => {
+
+    if(currentPage < pages.length - 1){
+
+      pages[currentPage].classList.add("turn");
+      currentPage++;
+    }
+  };
+
+  document.getElementById("prev").onclick = () => {
+
+    if(currentPage > 0){
+
+      currentPage--;
+      pages[currentPage].classList.remove("turn");
+    }
+  };
+
+</script>
+
+</body>
+</html>
